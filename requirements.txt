@@ -1,0 +1,13 @@
+# Ingestão
+requests>=2.31.0
+google-cloud-bigquery>=3.20.0
+python-dotenv>=1.0.0
+
+# dbt (BigQuery adapter inclui dbt-core)
+dbt-bigquery>=1.7.0
+
+# Qualidade e testes
+pandera>=0.18.0
+
+# Dev
+ruff>=0.3.0
