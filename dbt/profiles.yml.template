@@ -1,0 +1,22 @@
+# Template de perfil dbt para football-analytics.
+# Copie para ~/.dbt/profiles.yml e ajuste se necessário.
+
+football_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: oauth                  # usa Application Default Credentials (gcloud auth application-default login)
+      project: <GCP_PROJECT_ID>
+      dataset: dbt_dev               # dataset de desenvolvimento
+      threads: 4
+      timeout_seconds: 300
+      location: US
+    prod:
+      type: bigquery
+      method: oauth
+      project: <GCP_PROJECT_ID>
+      dataset: dbt_prod              # dataset de produção
+      threads: 4
+      timeout_seconds: 300
+      location: US
