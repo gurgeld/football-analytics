@@ -26,7 +26,7 @@ unnested as (
     unnest(json_extract_array(source.table)) as row_data
 ),
 
-final as (
+deduped as (
     select
         competition_id,
         season_year,
@@ -47,6 +47,10 @@ final as (
         goal_difference,
         _ingested_at
     from unnested
+    qualify row_number() over (
+        partition by competition_id, season_year, matchday, type, team_id
+        order by _ingested_at desc
+    ) = 1
 )
 
-select * from final
+select * from deduped

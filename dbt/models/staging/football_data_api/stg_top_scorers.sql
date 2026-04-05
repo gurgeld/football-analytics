@@ -15,6 +15,14 @@ renamed as (
         penalties,
         _ingested_at
     from source
+),
+
+deduped as (
+    select * from renamed
+    qualify row_number() over (
+        partition by competition_id, season_year, person_id
+        order by _ingested_at desc
+    ) = 1
 )
 
-select * from renamed
+select * from deduped

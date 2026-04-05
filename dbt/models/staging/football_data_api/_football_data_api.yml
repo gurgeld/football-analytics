@@ -28,11 +28,11 @@ models:
       - name: status
         tests:
           - accepted_values:
-              values: ['SCHEDULED', 'LIVE', 'IN_PLAY', 'PAUSED', 'FINISHED', 'POSTPONED', 'SUSPENDED', 'CANCELLED']
+              values: ['SCHEDULED', 'LIVE', 'IN_PLAY', 'PAUSED', 'FINISHED', 'POSTPONED', 'SUSPENDED', 'CANCELLED', 'AWARDED', 'TIMED']
       - name: stage
         tests:
           - accepted_values:
-              values: ['GROUP_STAGE', 'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'THIRD_PLACE', 'FINAL', 'REGULAR_SEASON', 'PLAYOFFS']
+              values: ['GROUP_STAGE', 'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'THIRD_PLACE', 'FINAL', 'REGULAR_SEASON', 'PLAYOFFS', 'LEAGUE_STAGE', 'LAST_32']
       - name: winner
         tests:
           - accepted_values:
@@ -54,7 +54,12 @@ models:
       - name: position
         tests:
           - accepted_values:
-              values: ['Goalkeeper', 'Defence', 'Midfield', 'Offence']
+              values: [
+                'Goalkeeper',
+                'Defence', 'Centre-Back', 'Right-Back', 'Left-Back',
+                'Midfield', 'Central Midfield', 'Defensive Midfield', 'Attacking Midfield', 'Left Midfield', 'Right Midfield',
+                'Offence', 'Centre-Forward', 'Right Winger', 'Left Winger'
+              ]
 
   - name: stg_standings
     tests:

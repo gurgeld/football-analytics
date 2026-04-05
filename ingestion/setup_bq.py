@@ -6,7 +6,10 @@ Usage:
 import logging
 import os
 
+from dotenv import load_dotenv
 from google.cloud import bigquery
+
+load_dotenv()
 from google.cloud.exceptions import Conflict
 
 logging.basicConfig(level=logging.INFO, format="%(levelname)s %(message)s")

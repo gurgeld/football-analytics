@@ -25,17 +25,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from ingestion.bq_loader import BigQueryLoader
-from ingestion.client import FootballDataClient, FREE_PLAN_CODES
+from ingestion.client import FootballDataClient
 from ingestion.resources.areas import ingest_areas
-from ingestion.resources.competitions import ingest_competitions, get_competition_seasons
+from ingestion.resources.competitions import ingest_competitions, get_competition_seasons, FREE_PLAN_CODES
 from ingestion.resources.matches import ingest_matches
 from ingestion.resources.persons import ingest_persons
 from ingestion.resources.standings import ingest_standings
 from ingestion.resources.teams import ingest_teams
 from ingestion.resources.top_scorers import ingest_top_scorers
-
-# Re-export FREE_PLAN_CODES so it's importable from main
-from ingestion.resources.competitions import FREE_PLAN_CODES  # noqa: F811
 
 ALL_RESOURCES = ["areas", "competitions", "matches", "teams", "persons", "standings", "top_scorers"]
 

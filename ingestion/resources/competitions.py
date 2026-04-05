@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 TABLE = "raw.competitions"
 
 FREE_PLAN_CODES = frozenset(
-    ["PL", "ELC", "BL1", "PD", "SA", "FL1", "DED", "PPL", "SB", "CL", "EC", "WC"]
+    ["PL", "ELC", "BL1", "PD", "SA", "FL1", "DED", "PPL", "BSA", "CL", "EC", "WC"]
 )
 
 
@@ -53,5 +53,9 @@ def get_competition_seasons(client: FootballDataClient, competition_code: str) -
     data = client.get(f"/competitions/{competition_code}")
     if data is None:
         return []
+    MIN_SEASON = 2022
     seasons = data.get("seasons", [])
-    return sorted({s["startDate"][:4] for s in seasons if s.get("startDate")}, key=int)
+    return sorted(
+        {s["startDate"][:4] for s in seasons if s.get("startDate") and int(s["startDate"][:4]) >= MIN_SEASON},
+        key=int,
+    )
