@@ -1,0 +1,12 @@
+football_analytics:
+  target: dev
+  outputs:
+    dev:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT') }}"
+      dataset: football_analytics
+      threads: 4
+      timeout_seconds: 300
+      location: US
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS') }}"

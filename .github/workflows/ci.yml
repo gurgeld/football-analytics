@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  lint-and-compile:
+    name: dbt compile + SQLFluff lint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Write GCP service account credentials
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS_JSON }}
+        run: |
+          echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" | base64 -d > /tmp/sa_key.json
+          echo "GOOGLE_APPLICATION_CREDENTIALS=/tmp/sa_key.json" >> $GITHUB_ENV
+
+      - name: Install dbt packages
+        working-directory: dbt
+        run: dbt deps
+
+      - name: dbt compile (DAG validation)
+        working-directory: dbt
+        env:
+          BQ_PROJECT: ${{ secrets.BQ_PROJECT }}
+        run: dbt compile --profiles-dir ./ci_profiles
+
+      - name: SQLFluff lint
+        run: sqlfluff lint dbt/models/ --dialect bigquery

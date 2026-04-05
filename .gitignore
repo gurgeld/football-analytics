@@ -1,0 +1,43 @@
+.agent/
+.claude/
+.etc/
+.specify/
+specs/
+CLAUDE.md
+
+# Environment
+.env
+*.env
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+.eggs/
+
+# dbt
+dbt/target/
+dbt/dbt_packages/
+dbt/logs/
+dbt/profiles.yml
+dbt/ci_profiles/profiles.yml
+
+# Logs
+logs/
+*.log
+
+# BigQuery credentials
+service-account*.json
+*-key.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/

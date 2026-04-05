@@ -1,0 +1,237 @@
+version: 2
+
+models:
+  - name: stg_areas
+    columns:
+      - name: area_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_competitions
+    columns:
+      - name: competition_id
+        tests:
+          - unique
+          - not_null
+      - name: type
+        tests:
+          - accepted_values:
+              values: ['LEAGUE', 'CUP']
+
+  - name: stg_matches
+    columns:
+      - name: match_id
+        tests:
+          - unique
+          - not_null
+      - name: status
+        tests:
+          - accepted_values:
+              values: ['SCHEDULED', 'LIVE', 'IN_PLAY', 'PAUSED', 'FINISHED', 'POSTPONED', 'SUSPENDED', 'CANCELLED', 'AWARDED', 'TIMED']
+      - name: stage
+        tests:
+          - accepted_values:
+              values: ['GROUP_STAGE', 'LAST_16', 'QUARTER_FINALS', 'SEMI_FINALS', 'THIRD_PLACE', 'FINAL', 'REGULAR_SEASON', 'PLAYOFFS', 'LEAGUE_STAGE', 'LAST_32']
+      - name: winner
+        tests:
+          - accepted_values:
+              values: ['HOME_TEAM', 'AWAY_TEAM', 'DRAW']
+
+  - name: stg_teams
+    columns:
+      - name: team_id
+        tests:
+          - unique
+          - not_null
+
+  - name: stg_persons
+    columns:
+      - name: person_id
+        tests:
+          - unique
+          - not_null
+      - name: position
+        tests:
+          - accepted_values:
+              values: [
+                'Goalkeeper',
+                'Defence', 'Centre-Back', 'Right-Back', 'Left-Back',
+                'Midfield', 'Central Midfield', 'Defensive Midfield', 'Attacking Midfield', 'Left Midfield', 'Right Midfield',
+                'Offence', 'Centre-Forward', 'Right Winger', 'Left Winger'
+              ]
+
+  - name: stg_standings
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - competition_id
+            - season_year
+            - matchday
+            - type
+            - team_id
+    columns:
+      - name: competition_id
+        tests:
+          - not_null
+      - name: season_year
+        tests:
+          - not_null
+      - name: matchday
+        tests:
+          - not_null
+      - name: type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['TOTAL', 'HOME', 'AWAY']
+      - name: team_id
+        tests:
+          - not_null
+
+  - name: stg_top_scorers
+    tests:
+      - dbt_utils.unique_combination_of_columns:
+          combination_of_columns:
+            - competition_id
+            - season_year
+            - person_id
+    columns:
+      - name: competition_id
+        tests:
+          - not_null
+      - name: season_year
+        tests:
+          - not_null
+      - name: person_id
+        tests:
+          - not_null
+
+sources:
+  - name: raw
+    database: "{{ env_var('BQ_PROJECT') }}"
+    schema: raw
+    tables:
+      - name: areas
+        description: "Geographic regions ingested from the football-data.org API"
+        columns:
+          - name: id
+            description: "Stable area numeric ID"
+          - name: name
+            description: "Area name (country or continent)"
+          - name: code
+            description: "ISO-style code, e.g. ENG"
+          - name: parent_area
+            description: "JSON object — parent geographic area"
+          - name: child_areas
+            description: "JSON array — child areas"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: competitions
+        description: "Leagues and cups available on the free plan"
+        columns:
+          - name: id
+            description: "Stable competition numeric ID"
+          - name: name
+            description: "Full competition name"
+          - name: code
+            description: "Short code, e.g. PL, BL1"
+          - name: type
+            description: "LEAGUE or CUP"
+          - name: area
+            description: "JSON object — associated area"
+          - name: seasons
+            description: "JSON array — all seasons for this competition"
+          - name: current_season
+            description: "JSON object — current active season"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: matches
+        description: "Individual matches for all competitions and seasons"
+        columns:
+          - name: id
+            description: "Stable match numeric ID"
+          - name: utc_date
+            description: "Kick-off time in UTC"
+          - name: status
+            description: "Match status enum"
+          - name: matchday
+            description: "Matchday number within the season"
+          - name: stage
+            description: "Match stage (GROUP_STAGE, FINAL, etc.)"
+          - name: home_team
+            description: "JSON object — home team"
+          - name: away_team
+            description: "JSON object — away team"
+          - name: score
+            description: "JSON object — full and half-time scores"
+          - name: goals
+            description: "JSON array — goal events"
+          - name: bookings
+            description: "JSON array — card events"
+          - name: substitutions
+            description: "JSON array — substitution events"
+          - name: referees
+            description: "JSON array — match officials"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: teams
+        description: "Football clubs and national teams"
+        columns:
+          - name: id
+            description: "Stable team numeric ID"
+          - name: name
+            description: "Full team name"
+          - name: squad
+            description: "JSON array — squad members"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: persons
+        description: "Players, coaches, and referees"
+        columns:
+          - name: id
+            description: "Stable person numeric ID"
+          - name: name
+            description: "Full name"
+          - name: current_team
+            description: "JSON object — current team"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: standings
+        description: "Competition standings snapshots per matchday"
+        columns:
+          - name: competition_id
+            description: "Foreign key to competitions"
+          - name: season_year
+            description: "Season start year, e.g. 2023 for 2023/24"
+          - name: matchday
+            description: "Matchday of this snapshot"
+          - name: type
+            description: "TOTAL, HOME, or AWAY"
+          - name: table
+            description: "JSON array — full standings table rows"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"
+
+      - name: top_scorers
+        description: "Top scorer entries per competition and season"
+        columns:
+          - name: competition_id
+            description: "Foreign key to competitions"
+          - name: season_year
+            description: "Season start year"
+          - name: player_id
+            description: "Stable person ID extracted for idempotency"
+          - name: goals
+            description: "Goals scored in the season"
+          - name: player
+            description: "JSON object — player details"
+          - name: team
+            description: "JSON object — player's team"
+          - name: _ingested_at
+            description: "Pipeline insertion timestamp"

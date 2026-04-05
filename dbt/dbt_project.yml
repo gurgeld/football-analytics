@@ -1,0 +1,35 @@
+name: football_analytics
+version: '1.0.0'
+config-version: 2
+
+profile: football_analytics
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+macro-paths: ["macros"]
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+models:
+  football_analytics:
+    staging:
+      +materialized: view
+      +schema: staging
+    intermediate:
+      +materialized: view
+      +schema: intermediate
+    marts:
+      football_analytics:
+        +materialized: table
+        +schema: football_analytics
+        fct_matches:
+          +materialized: incremental
+        fct_standings:
+          +materialized: incremental
+        fct_top_scorers:
+          +materialized: incremental
+        fct_match_events:
+          +materialized: incremental
