@@ -1,9 +1,10 @@
-.agent/
-.claude/
-.etc/
-.specify/
-specs/
-CLAUDE.md
+# AI and Code Assistance
+#.agent/
+#.claude/
+#.etc/
+#.specify/
+#specs/
+#CLAUDE.md
 
 # Environment
 .env

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.specify/scripts/bash/create-new-feature.sh Build an end-to-end data pipeline for global football analytics, using the football-data.org API v4 as the data source.:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "WebSearch",
+      "WebFetch(domain:docs.football-data.org)",
+      "WebFetch(domain:www.football-data.org)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh claude:*)"
+    ]
+  }
+}
